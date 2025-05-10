@@ -1,0 +1,6 @@
+name = "daily-tools-graphql"
+main = "src/index.js"
+compatibility_date = "2023-09-04"
+
+[vars]
+ENVIRONMENT = "production" 

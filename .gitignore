@@ -1,0 +1,44 @@
+# 依赖目录
+node_modules/
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 日志文件
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 运行时数据
+.DS_Store
+.wrangler/
+.cloudflare/
+dist/
+
+# 编辑器目录和文件
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 构建输出
+.output/
+.build/
+dist/
+build/
+
+# 覆盖测试文件
+coverage/
+
+# 本地调试文件
+dev-dist/
+
+# 临时文件
+tmp/
+temp/ 
