@@ -1,6 +1,7 @@
 name = "summer-forest-d5e5"
 main = "src/index.js"
 compatibility_date = "2023-09-04"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENVIRONMENT = "production" 
