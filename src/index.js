@@ -20,15 +20,6 @@ const createServer = async (request) => {
       headers: request.headers,
       env: request.env,
     }),
-    formatError: (error) => {
-      console.error('GraphQL执行错误:', error);
-      return {
-        message: error.message,
-        locations: error.locations,
-        path: error.path,
-        extensions: error.extensions
-      };
-    },
   });
   
   await server.start();
@@ -42,7 +33,6 @@ const addCorsHeaders = (response) => {
   headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, Accept');
   headers.set('Access-Control-Max-Age', '86400');
-  headers.set('Content-Type', 'application/json');
   
   return new Response(response.body, {
     status: response.status,
@@ -59,7 +49,6 @@ const handleOptions = (request) => {
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, Origin, Accept',
       'Access-Control-Max-Age': '86400',
-      'Content-Type': 'application/json'
     },
     status: 204,
   });
@@ -87,32 +76,12 @@ export default {
         // 传递环境变量到请求中
         request.env = env;
         
-        try {
-          // 创建并启动 Apollo Server
-          const server = await createServer(request);
-          const response = await graphqlCloudflare(() => server.createGraphQLServerOptions(request))(request);
-          
-          // 添加CORS头
-          return addCorsHeaders(response);
-        } catch (error) {
-          console.error('GraphQL处理错误:', error);
-          
-          // 返回格式化的JSON错误
-          const errorResponse = new Response(
-            JSON.stringify({ 
-              errors: [{ message: '处理GraphQL请求时出错', originalError: error.message }],
-              data: null 
-            }),
-            { 
-              status: 500,
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-          
-          return addCorsHeaders(errorResponse);
-        }
+        // 创建并启动 Apollo Server
+        const server = await createServer(request);
+        const response = await graphqlCloudflare(() => server.createGraphQLServerOptions(request))(request);
+        
+        // 添加CORS头
+        return addCorsHeaders(response);
       }
       
       // 欢迎页
