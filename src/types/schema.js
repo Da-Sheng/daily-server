@@ -30,4 +30,9 @@ export const typeDefs = gql`
     tool(id: ID!): Tool
     toolsByCategory(categoryId: ID!): [Tool!]!
   }
+
+  type Mutation {
+    # 重置缓存，强制从API重新获取数据
+    resetCache: Boolean
+  }
 `; 
