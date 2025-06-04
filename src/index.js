@@ -8,19 +8,20 @@
 
 import { ApolloServer } from 'apollo-server-cloudflare';
 import { graphqlCloudflare } from 'apollo-server-cloudflare/dist/cloudflareApollo';
-import { typeDefs } from './types/schema.js';
-import { resolvers } from './resolvers/resolvers.js';
-import { databaseService } from './database/services/DatabaseService.js';
+import { typeDefs } from './schema/typeDefs.js';
+import resolvers from './resolvers/resolvers.js';
+import { databaseService } from './database/service/database.js';
 
 // 数据库初始化标记
 let dbInitialized = false;
 
 // 初始化数据库
-const initializeDatabase = async () => {
+const initializeDatabase = async (cloudflareEnv = null) => {
   if (!dbInitialized) {
     try {
       console.log('开始初始化数据库服务...');
-      await databaseService.initialize();
+      // 简单的连接测试
+      await databaseService.getAllCategories(cloudflareEnv);
       dbInitialized = true;
       console.log('✓ 数据库服务初始化完成');
     } catch (error) {
@@ -33,7 +34,7 @@ const initializeDatabase = async () => {
 // 创建 Apollo Server 实例并启动
 const createServer = async (request) => {
   // 确保数据库已初始化
-  await initializeDatabase();
+  await initializeDatabase(request.env);
   
   const server = new ApolloServer({
     typeDefs,
@@ -41,7 +42,7 @@ const createServer = async (request) => {
     introspection: true, // 允许内省（对开发有帮助）
     context: ({ request }) => ({
       headers: request.headers,
-      env: request.env,
+      cloudflareEnv: request.env,
     }),
   });
   

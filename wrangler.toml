@@ -9,4 +9,10 @@ ENVIRONMENT = "production"
 DATABASE_URL = "libsql://jjticket-kuang-sheng.aws-us-east-1.turso.io"
 
 # 注意：DATABASE_AUTH_TOKEN 需要通过 wrangler secret 命令设置
-# 运行: wrangler secret put DATABASE_AUTH_TOKEN 
+# 运行: wrangler secret put DATABASE_AUTH_TOKEN
+
+# D1 数据库配置
+[[d1_databases]]
+binding = "DB"
+database_name = "daily-tools-db"
+database_id = "your-database-id-here" 

@@ -1,0 +1,271 @@
+{
+  "info": {
+    "name": "票务系统 API",
+    "description": "票务系统 GraphQL API 测试集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8787/graphql",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "查询接口",
+      "item": [
+        {
+          "name": "获取所有票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ tickets { id title price totalQuantity availableQuantity soldQuantity isReleased venue startTime } }\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "获取可购买票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ availableTickets { id title price availableQuantity venue startTime organizer } }\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "根据uni256获取票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetTicket($uni256: String!) { ticket(uni256: $uni256) { id uni256 title description venue price totalQuantity availableQuantity startTime endTime organizer isReleased isEnabled } }\",\n  \"variables\": {\n    \"uni256\": \"请输入实际的uni256值\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "搜索票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query SearchTickets($filter: TicketFilterInput) { ticketsByFilter(filter: $filter) { id title description venue price availableQuantity startTime } }\",\n  \"variables\": {\n    \"filter\": {\n      \"keyword\": \"音乐会\",\n      \"availableOnly\": true,\n      \"limit\": 10\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "获取票务统计",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ ticketStats { totalTickets releasedTickets soldOutTickets expiredTickets totalQuantity totalSold totalAvailable } }\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "变更接口",
+      "item": [
+        {
+          "name": "创建票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation CreateTicket($input: TicketInput!) { createTicket(input: $input) { id uni256 title description venue price totalQuantity availableQuantity isReleased organizer createdAt } }\",\n  \"variables\": {\n    \"input\": {\n      \"title\": \"2024新年音乐会\",\n      \"description\": \"著名交响乐团新年音乐会演出\",\n      \"venue\": \"国家大剧院\",\n      \"category\": \"concert\",\n      \"price\": 388.00,\n      \"totalQuantity\": 500,\n      \"startTime\": \"2024-12-31T19:30:00Z\",\n      \"endTime\": \"2024-12-31T22:00:00Z\",\n      \"isReleased\": true,\n      \"isEnabled\": true,\n      \"organizer\": \"国家交响乐团\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "购买票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation PurchaseTicket($uni256: String!, $quantity: Int) { purchaseTicket(uni256: $uni256, quantity: $quantity) { id title totalQuantity availableQuantity soldQuantity isSoldOut } }\",\n  \"variables\": {\n    \"uni256\": \"请输入实际的uni256值\",\n    \"quantity\": 3\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "更新票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation UpdateTicket($uni256: String!, $input: TicketUpdateInput!) { updateTicket(uni256: $uni256, input: $input) { id title price totalQuantity availableQuantity updatedAt } }\",\n  \"variables\": {\n    \"uni256\": \"请输入实际的uni256值\",\n    \"input\": {\n      \"title\": \"更新后的票务标题\",\n      \"price\": 199.00,\n      \"description\": \"更新后的描述\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "删除票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation DeleteTicket($uni256: String!) { deleteTicket(uni256: $uni256) }\",\n  \"variables\": {\n    \"uni256\": \"请输入实际的uni256值\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "高级查询",
+      "item": [
+        {
+          "name": "按分类筛选票务",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query FilterByCategory($filter: TicketFilterInput) { ticketsByFilter(filter: $filter) { id title venue price availableQuantity startTime } }\",\n  \"variables\": {\n    \"filter\": {\n      \"category\": \"concert\",\n      \"isReleased\": true,\n      \"limit\": 20\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "按时间范围筛选",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query FilterByTimeRange($filter: TicketFilterInput) { ticketsByFilter(filter: $filter) { id title venue startTime price availableQuantity } }\",\n  \"variables\": {\n    \"filter\": {\n      \"startTimeFrom\": \"2024-12-01T00:00:00Z\",\n      \"startTimeTo\": \"2024-12-31T23:59:59Z\",\n      \"availableOnly\": true\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "分页查询",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query PaginatedTickets($filter: TicketFilterInput) { ticketsByFilter(filter: $filter) { id title price availableQuantity venue startTime } }\",\n  \"variables\": {\n    \"filter\": {\n      \"limit\": 5,\n      \"offset\": 0,\n      \"isReleased\": true\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

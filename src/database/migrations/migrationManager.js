@@ -106,11 +106,60 @@ export const runSchemaSQL = async () => {
       )
     `);
     
+    // 创建票务表
+    console.log('创建tickets表...');
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS tickets (
+        id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+        uni256 TEXT UNIQUE NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        venue TEXT,
+        category TEXT NOT NULL DEFAULT 'general',
+        price REAL NOT NULL,
+        total_quantity INTEGER NOT NULL,
+        available_quantity INTEGER NOT NULL,
+        sold_quantity INTEGER NOT NULL DEFAULT 0,
+        start_time TEXT NOT NULL,
+        end_time TEXT,
+        sale_start_time TEXT,
+        sale_end_time TEXT,
+        is_released INTEGER NOT NULL DEFAULT 0,
+        is_expired INTEGER NOT NULL DEFAULT 0,
+        is_enabled INTEGER NOT NULL DEFAULT 1,
+        is_sold_out INTEGER NOT NULL DEFAULT 0,
+        organizer TEXT,
+        contact_info TEXT,
+        terms TEXT,
+        image_url TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // 创建更新时间触发器（票务表）
+    console.log('创建tickets表更新触发器...');
+    await client.execute(`
+      CREATE TRIGGER IF NOT EXISTS update_tickets_updated_at
+      AFTER UPDATE ON tickets
+      FOR EACH ROW
+      BEGIN
+        UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+      END
+    `);
+    
     // 创建索引
     console.log('创建索引...');
     await client.execute('CREATE INDEX IF NOT EXISTS idx_tools_category_id ON tools(category_id)');
     await client.execute('CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name)');
     await client.execute('CREATE INDEX IF NOT EXISTS idx_tools_name ON tools(name)');
+    
+    // 票务表索引
+    await client.execute('CREATE INDEX IF NOT EXISTS idx_tickets_uni256 ON tickets(uni256)');
+    await client.execute('CREATE INDEX IF NOT EXISTS idx_tickets_category ON tickets(category)');
+    await client.execute('CREATE INDEX IF NOT EXISTS idx_tickets_start_time ON tickets(start_time)');
+    await client.execute('CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(is_released, is_enabled, is_expired)');
+    await client.execute('CREATE INDEX IF NOT EXISTS idx_tickets_availability ON tickets(available_quantity, is_sold_out)');
     
     console.log('✓ Schema SQL执行完成');
     return true;
