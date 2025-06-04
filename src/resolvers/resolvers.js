@@ -35,6 +35,11 @@ export const resolvers = {
   
   // 工具的分类关联解析器
   Tool: {
+    // 映射数据库字段名到GraphQL字段名
+    categoryId: (parent) => {
+      return parent.category_id;
+    },
+    
     category: async (parent) => {
       return await databaseService.getCategoryById(parent.category_id);
     },

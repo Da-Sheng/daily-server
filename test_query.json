@@ -1,3 +1,0 @@
-{
-  "query": "{ toolsByCategory(categoryId: \"finance\") { id name description } }"
-} 
