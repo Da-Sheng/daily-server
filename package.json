@@ -5,20 +5,23 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "./start-dev.sh",
+    "dev:with-env": "export $(grep -v '^#' .env | xargs) && wrangler dev --env development",
+    "dev:simple": "pnpm exec wrangler dev",
     "deploy": "wrangler deploy",
-    "db:test": "node src/database/tools/dbManager.js test",
-    "db:init": "node src/database/tools/dbManager.js init",
-    "db:stats": "node src/database/tools/dbManager.js stats",
-    "db:help": "node src/database/tools/dbManager.js help"
+    "db:test": "node -r dotenv/config src/database/tools/dbManager.js test",
+    "db:init": "node -r dotenv/config src/database/tools/dbManager.js init",
+    "db:stats": "node -r dotenv/config src/database/tools/dbManager.js stats",
+    "db:help": "node -r dotenv/config src/database/tools/dbManager.js help"
   },
   "dependencies": {
+    "@libsql/client": "^0.5.2",
     "apollo-server-cloudflare": "^3.12.1",
+    "dotenv": "^16.5.0",
     "graphql": "^16.8.1",
-    "graphql-tag": "^2.12.6",
-    "@libsql/client": "^0.5.2"
+    "graphql-tag": "^2.12.6"
   },
   "devDependencies": {
     "wrangler": "^3.19.0"
   }
-} 
+}
