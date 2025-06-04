@@ -3,15 +3,38 @@
  * 
  * - 提供工具分类和工具项数据的 GraphQL API
  * - 部署在 Cloudflare Workers 上
+ * - 使用 Turso 数据库存储数据
  */
 
 import { ApolloServer } from 'apollo-server-cloudflare';
 import { graphqlCloudflare } from 'apollo-server-cloudflare/dist/cloudflareApollo';
 import { typeDefs } from './types/schema.js';
 import { resolvers } from './resolvers/resolvers.js';
+import { databaseService } from './database/services/DatabaseService.js';
+
+// 数据库初始化标记
+let dbInitialized = false;
+
+// 初始化数据库
+const initializeDatabase = async () => {
+  if (!dbInitialized) {
+    try {
+      console.log('开始初始化数据库服务...');
+      await databaseService.initialize();
+      dbInitialized = true;
+      console.log('✓ 数据库服务初始化完成');
+    } catch (error) {
+      console.error('✗ 数据库初始化失败:', error);
+      throw error;
+    }
+  }
+};
 
 // 创建 Apollo Server 实例并启动
 const createServer = async (request) => {
+  // 确保数据库已初始化
+  await initializeDatabase();
+  
   const server = new ApolloServer({
     typeDefs,
     resolvers,

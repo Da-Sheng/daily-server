@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "description": "每日工具GraphQL API服务",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "db:test": "node src/database/tools/dbManager.js test",
+    "db:init": "node src/database/tools/dbManager.js init",
+    "db:stats": "node src/database/tools/dbManager.js stats",
+    "db:help": "node src/database/tools/dbManager.js help"
   },
   "dependencies": {
     "apollo-server-cloudflare": "^3.12.1",
     "graphql": "^16.8.1",
-    "graphql-tag": "^2.12.6"
+    "graphql-tag": "^2.12.6",
+    "@libsql/client": "^0.5.2"
   },
   "devDependencies": {
     "wrangler": "^3.19.0"
